@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
-    "@ethereum-attestation-service/eas-sdk": "^0.26.2",
+    "@ethereum-attestation-service/eas-sdk": "^0.27.0",
     "buffer": "^6.0.3",
     "events": "^3.3.0",
     "process": "^0.11.10",

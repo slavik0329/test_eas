@@ -335,10 +335,10 @@
     hardhat "2.12.6"
     typechain "^8.1.1"
 
-"@ethereum-attestation-service/eas-sdk@^0.26.2":
-  version "0.26.2"
-  resolved "https://registry.yarnpkg.com/@ethereum-attestation-service/eas-sdk/-/eas-sdk-0.26.2.tgz#1d9ad308e62bb9420001c5de9e774dc9cc5ce13c"
-  integrity sha512-/03unILPVohYVuPPmm6j/Q6/vrV1oUY3JCYaG+TFCXCnWuwsebITC903OOY5qkyHfe2Y9eVDllp8vfGbeNUh6w==
+"@ethereum-attestation-service/eas-sdk@^0.27.0":
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/@ethereum-attestation-service/eas-sdk/-/eas-sdk-0.27.0.tgz#1e41b8372062da342983c3026ece804463a0d048"
+  integrity sha512-siTxeegKlPDE8j8cllFpUfFFhb6yRW1bGugXZPwKbN9tmx1IK7yJqwVnMgoi8xSSdgJq+urmVhy6hbVioglZRA==
   dependencies:
     "@ethereum-attestation-service/eas-contracts" "^0.26.1"
     ethers "^5.7.2"

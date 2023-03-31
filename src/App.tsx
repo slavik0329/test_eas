@@ -81,11 +81,9 @@ function App() {
       const delegated = new Delegated({
         address: EASContractAddress,
         chainId: chainId,
-        version: "1",
+        version: "0.26",
       });
       console.log("encodedDataString:", encodedDataString);
-      const encodedData = Buffer.from(encodedDataString.substring(2), "hex");
-      console.log("encodedData:", encodedData);
       console.log("wallet._isSigner", wallet._isSigner);
 
       console.log("signing atttestation ...");
@@ -97,7 +95,7 @@ function App() {
             expirationTime: ethers.BigNumber.from(0),
             revocable: false,
             refUID: ZERO_BYTES32,
-            data: encodedData,
+            data: encodedDataString,
             // ----
             nonce: ethers.BigNumber.from(0),
           },
@@ -120,7 +118,7 @@ function App() {
             revocable: delegatedAttestation.message.revocable,
             data: encodedDataString,
           },
-          signature: delegatedAttestation,
+          signature: delegatedAttestation.signature,
           attester: wallet.address,
         });
       } catch (e) {
