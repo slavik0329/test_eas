@@ -94,7 +94,7 @@ function App() {
       try {
         const params = {
           schema: gitcoinVCSchema,
-          recipient: "0x4A13F4394cF05a52128BdA527664429D5376C67f",
+          recipient: "0x1e3de6aE412cA218FD2ae3379750388D414532dc",
           expirationTime: ethers.BigNumber.from(0),
           revocable: false,
           refUID: ZERO_BYTES32,
@@ -113,7 +113,7 @@ function App() {
         console.log("provider", provider);
         console.log("wallet.address", wallet.address);
         console.log("wallet.address", wallet.address);
-        const eas = new EAS(EASContractAddress, {proxy: EASDelegateProxyAddress, signerOrProvider: provider.getSigner()});
+        const eas = new EAS(EASContractAddress, {proxy: PermissionedProxyAddress, signerOrProvider: provider.getSigner()});
         // eas.connect(wallet);
 
         const tx = await eas.attestByDelegationProxy({
