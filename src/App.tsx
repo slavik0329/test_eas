@@ -9,7 +9,7 @@ import { ethers } from "ethers";
 import "./App.css";
 
 const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
-const PermissionedProxyAddress = '0x6cC8993C4dD969FDb5896fEdA8146a9eE40CC1f3'
+const PermissionedProxyAddress = '0xEB196CA7619d3C3aa4AE638fbDa44903cB19F039'
 
 const gitcoinVCSchema =
   "0x853a55f39e2d1bf1e6731ae7148976fbbb0c188a898a233dba61a233d8c0e4a4";
@@ -83,11 +83,12 @@ function App() {
       console.log('dePro', DelegatedProxy)
 
       const delegated = new DelegatedProxy({
-        name: "PermissionedEIP712Proxy",
+        name: "EIP712Proxy",
         address: PermissionedProxyAddress,
         chainId: chainId,
         version: "0.1",
       });
+
       console.log("encodedDataString:", encodedDataString);
       console.log("wallet._isSigner", wallet._isSigner);
 
