@@ -1,18 +1,17 @@
 import { useState, useEffect } from "react";
 import {
   EAS,
-  Offchain,
   SchemaEncoder,
-  SchemaRegistry,
-  Delegated,
+  DelegatedProxy,
   ZERO_BYTES32,
 } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
-import { Buffer } from "buffer";
-
 import "./App.css";
 
-export const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
+const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
+const PermissionedProxyAddress = '0x6cC8993C4dD969FDb5896fEdA8146a9eE40CC1f3'
+const EASDelegateProxyAddress = '0xEB196CA7619d3C3aa4AE638fbDa44903cB19F039';
+
 const gitcoinVCSchema =
   "0x853a55f39e2d1bf1e6731ae7148976fbbb0c188a898a233dba61a233d8c0e4a4";
 
@@ -24,6 +23,8 @@ function App() {
 
   useEffect(() => {
     console.log("ethers.providers.Web3Provider", ethers.providers);
+
+    // @ts-ignore
     const p = new ethers.providers.Web3Provider(window.ethereum);
     setProvider(p);
   }, []);
@@ -45,7 +46,7 @@ function App() {
 
   const createOnChainAttestation = async () => {
     const eas = new EAS(EASContractAddress);
-    eas.connect(provider.getSigner());
+    eas.connect(provider!.getSigner());
     // Initialize SchemaEncoder with the schema string
 
     const schemaEncoder = new SchemaEncoder("string provider, string hash");
@@ -78,27 +79,33 @@ function App() {
     ]);
 
     if (provider && account && chainId) {
-      const delegated = new Delegated({
-        address: EASContractAddress,
+      console.log('dePro', DelegatedProxy)
+
+      const delegated = new DelegatedProxy({
+        name: "PermissionedEIP712Proxy",
+        address: PermissionedProxyAddress,
         chainId: chainId,
-        version: "0.26",
+        version: "0.1",
       });
       console.log("encodedDataString:", encodedDataString);
       console.log("wallet._isSigner", wallet._isSigner);
 
       console.log("signing atttestation ...");
       try {
-        const delegatedAttestation = await delegated.signDelegatedAttestation(
-          {
-            schema: gitcoinVCSchema,
-            recipient: "0x4A13F4394cF05a52128BdA527664429D5376C67f",
-            expirationTime: ethers.BigNumber.from(0),
-            revocable: false,
-            refUID: ZERO_BYTES32,
-            data: encodedDataString,
-            // ----
-            nonce: ethers.BigNumber.from(0),
-          },
+        const params = {
+          schema: gitcoinVCSchema,
+          recipient: "0x4A13F4394cF05a52128BdA527664429D5376C67f",
+          expirationTime: ethers.BigNumber.from(0),
+          revocable: false,
+          refUID: ZERO_BYTES32,
+          data: encodedDataString,
+          deadline: Math.floor((Date.now()/1000)) + 1000,
+        };
+
+        console.log("params", params);
+
+        const delegatedAttestation = await delegated.signDelegatedProxyAttestation(
+          params,
           wallet
         );
 
@@ -106,11 +113,10 @@ function App() {
         console.log("provider", provider);
         console.log("wallet.address", wallet.address);
         console.log("wallet.address", wallet.address);
-        const eas = new EAS(EASContractAddress);
-        eas.connect(provider.getSigner());
+        const eas = new EAS(EASContractAddress, {proxy: EASDelegateProxyAddress, signerOrProvider: provider.getSigner()});
         // eas.connect(wallet);
 
-        const tx = await eas.attestByDelegation({
+        const tx = await eas.attestByDelegationProxy({
           schema: delegatedAttestation.message.schema,
           data: {
             recipient: delegatedAttestation.message.recipient,
@@ -119,6 +125,7 @@ function App() {
             data: encodedDataString,
           },
           signature: delegatedAttestation.signature,
+          deadline: delegatedAttestation.message.deadline,
           attester: wallet.address,
         });
       } catch (e) {
@@ -138,7 +145,7 @@ function App() {
         Create delegated Attestation
       </button>
       <button onClick={createOnChainAttestation}>
-        Create onchian attestation
+        Create onchain attestation
       </button>
     </div>
   );
