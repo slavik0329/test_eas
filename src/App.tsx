@@ -9,8 +9,7 @@ import { ethers } from "ethers";
 import "./App.css";
 
 const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
-const PermissionedProxyAddress = '0xEB196CA7619d3C3aa4AE638fbDa44903cB19F039'
-
+const PermissionedProxyAddress = "0xEB196CA7619d3C3aa4AE638fbDa44903cB19F039";
 const gitcoinVCSchema =
   "0x853a55f39e2d1bf1e6731ae7148976fbbb0c188a898a233dba61a233d8c0e4a4";
 
@@ -80,7 +79,7 @@ function App() {
     ]);
 
     if (provider && account && chainId) {
-      console.log('dePro', DelegatedProxy)
+      console.log("dePro", DelegatedProxy);
 
       const delegated = new DelegatedProxy({
         name: "EIP712Proxy",
@@ -101,21 +100,23 @@ function App() {
           revocable: false,
           refUID: ZERO_BYTES32,
           data: encodedDataString,
-          deadline: Math.floor((Date.now()/1000)) + 1000,
+          // When can this attestation be published until
+          deadline: Math.floor(Date.now() / 1000) + 1000,
         };
 
         console.log("params", params);
 
-        const delegatedAttestation = await delegated.signDelegatedProxyAttestation(
-          params,
-          wallet
-        );
+        const delegatedAttestation =
+          await delegated.signDelegatedProxyAttestation(params, wallet);
 
         console.log("delegatedAttestation", delegatedAttestation);
         console.log("provider", provider);
         console.log("wallet.address", wallet.address);
         console.log("wallet.address", wallet.address);
-        const eas = new EAS(EASContractAddress, {proxy: PermissionedProxyAddress, signerOrProvider: provider.getSigner()});
+        const eas = new EAS(EASContractAddress, {
+          proxy: PermissionedProxyAddress,
+          signerOrProvider: provider.getSigner(),
+        });
 
         const tx = await eas.attestByDelegationProxy({
           schema: delegatedAttestation.message.schema,
@@ -134,7 +135,7 @@ function App() {
 
         tx.wait().then((uid) => {
           console.log("uid", uid);
-        })
+        });
       } catch (e) {
         console.error("Error:", e);
       }
