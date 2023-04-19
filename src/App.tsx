@@ -10,7 +10,6 @@ import "./App.css";
 
 const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
 const PermissionedProxyAddress = '0x6cC8993C4dD969FDb5896fEdA8146a9eE40CC1f3'
-const EASDelegateProxyAddress = '0xEB196CA7619d3C3aa4AE638fbDa44903cB19F039';
 
 const gitcoinVCSchema =
   "0x853a55f39e2d1bf1e6731ae7148976fbbb0c188a898a233dba61a233d8c0e4a4";
@@ -65,6 +64,8 @@ function App() {
       },
       schema: gitcoinVCSchema,
     });
+
+    console.log("newAttestationUID", newAttestationUID);
   };
 
   const delegatedAttestationRequest = async () => {
@@ -114,7 +115,6 @@ function App() {
         console.log("wallet.address", wallet.address);
         console.log("wallet.address", wallet.address);
         const eas = new EAS(EASContractAddress, {proxy: PermissionedProxyAddress, signerOrProvider: provider.getSigner()});
-        // eas.connect(wallet);
 
         const tx = await eas.attestByDelegationProxy({
           schema: delegatedAttestation.message.schema,
@@ -128,6 +128,12 @@ function App() {
           deadline: delegatedAttestation.message.deadline,
           attester: wallet.address,
         });
+
+        console.log("tx", tx);
+
+        tx.wait().then((uid) => {
+          console.log("uid", uid);
+        })
       } catch (e) {
         console.error("Error:", e);
       }
